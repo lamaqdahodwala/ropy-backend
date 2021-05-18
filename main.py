@@ -7,7 +7,10 @@ app = Sanic('app')
 
 @app.route('/person/<username>')
 async def data_from_username(req, username):
-    data = await client.get_user_by_username(username)
+    try:
+        data = await client.get_user_by_username(username)
+    except Exception:
+        return json({'error': 'user does not exist'}, status=404)
     status = await data.get_status()
     friend_count = await data.get_friends_count()
     followers_count = await data.get_followers_count()
@@ -35,7 +38,10 @@ async def data_from_username(req, username):
 
 @app.route('/person/id/<id>')
 async def data_from_user_id(req, id: int):
-    data = await client.get_user(id)
+    try:
+        data = await client.get_user(id)
+    except Exception:
+        return json({'error': 'user does not exist'}, status=404)
     url= data.profile_url
     status = await data.get_status()
     friend_count = await data.get_friends_count()
